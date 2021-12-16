@@ -1,0 +1,107 @@
+  title : "Tutorial "
+☺nnnnn                
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Tutorial}
+  %\V ignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Getting Started
+
+This tutorial will show you how to use the vifmiqo function from the Rvifmiqo package. First, you will need to load all the required libraries. Instructions on how to install the "gurobi" package can be found at https://www.gurobi.com/.
+
+
+```{r setup}
+# Required to run the vifmiqo function
+library(Rvifmiqo)
+library(Matrix)
+library(gurobi)
+# Used for data formatting
+library(fastDummies)
+library(ggplot2)
+library(reshape2)
+```
+
+## Data Formatting
+
+For this tutorial, we will be using the "iris" dataset that is built in to R. 
+
+```{r}
+data(iris)
+head(iris)
+```
+
+
+The vifmiqo function requires the user to separate the covariates of interest from the outcome of interest. Before we can run the function, we must remove any rows containing missing data and create dummy variables for each categorical variable. Then, we need to select an outcome and reformat the data into X and y. For this example, let's suppose we are trying to predict Petal Width using the other variables as predictors. 
+
+```{r, warning=FALSE}
+# Remove rows with missing values
+iris <- iris[complete.cases(iris), ]
+
+# Separate predictors and outcome
+X <- iris[ , !(names(iris) == 'Petal.Width')]
+y <- iris$Petal.Width
+
+# Create dummy variables for categorical data
+X <- dummy_cols(X, select_columns = c("Species"))
+
+# Remove the original Species variable
+X <- X[ , !(names(X) == 'Species')]
+# See the results
+head(X)
+```
+
+## Eliminating Multicollinearity
+
+All that's left to do is call the function and examine the results.
+
+```{r}
+vif(X,y)
+```
+
+As we can see, our outcome selects only four of the six predictors. Although we cannot easily visualize multicollinearity, the presence of pairwise linear associaitons in the original data is reason for concern. 
+```{r, echo=FALSE}
+ get_upper_tri <- function(cormat){
+    cormat[lower.tri(cormat)]<- NA
+    return(cormat)
+  }
+
+cormat <- round(cor(X),2)
+upper_tri <- get_upper_tri(cormat)
+
+melted_cormat <- melt(upper_tri, na.rm = TRUE)
+# Heatmap
+library(ggplot2)
+ggplot(data = melted_cormat, aes(Var2, Var1, fill = value))+
+ geom_tile(color = "white")+
+ scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+   midpoint = 0, limit = c(-1,1), space = "Lab", 
+   name="Pearson\nCorrelation") +
+  theme_minimal()+ 
+ theme(axis.text.x = element_text(angle = 45, vjust = 1, 
+    size = 12, hjust = 1))+
+ coord_fixed()
+```
+
+## Other notes
+
+The optional alpha parameter measures how much multicollinearity we wish to allow. Values of 5 and 10 are the most common, with 5 being more restricitive. In this case, changing alpha to 10 does not change the results, however in a larger dataset this change could result in more covariates being selected.
+```{r}
+vifmiqo(X,y,alpha=10)
+```
+
+
+## Performance Evaluation
+
+```{r}
+bench::mark(vifmiqo(X,y))
+```
+
