@@ -1,8 +1,5 @@
 # Rvifmiqo
-Description of overall package here.
-
-# Functions
-Description of individual function(s) here.
+The 'Rvivmiqo' package and 'vifmiqo' function funciton used to eliminate multicollinearity.
 
 # Installation
 ```{r}
