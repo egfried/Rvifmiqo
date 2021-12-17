@@ -8,6 +8,7 @@ Authors@R:
 Author: Emily Friedman [aut, cre],
   Kevin Smith [aut],
   Yuntian Wu [ctb]
+Maintainer: Emily Friedman <egfried@umich.edu>
 Description: This function loads data in two pieces, X and y. Then it selects the subset
      of variables that minimize multicollinearity using a mixed-integer optimization framework.
 License: GPL (>= 2)
