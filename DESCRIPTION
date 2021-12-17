@@ -2,13 +2,15 @@ Package: Rvifmiqo
 Title: Eliminate Multicollinearity in Multiple Regression
 Version: 0.0.0.9000
 Authors@R: 
-    person("Emily", "Friedman", "egfried@umich.edu", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
-Imports:
-        Matrix (>= 1.3.4)
-        gurobi (>= 9.1.2)
+    c(person("Emily", "Friedman", ,"egfried@umich.edu", role = c("aut", "cre")),
+    person("Kevin", "Smith", ,"kvbsmith@umich.edu", role = "aut"),
+    person("Yuntian", "Wu", ,"yuntian@umich.edu", role = "aut"))
+Author: Emily Friedman [aut, cre],
+  Kevin Smith [aut],
+  Yuntian Wu [ctb]
+Description: This function loads data in two pieces, X and y. Then it selects the subset
+     of variables that minimize multicollinearity using a mixed-integer optimization framework.
+License: GPL (>= 2)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
@@ -19,3 +21,6 @@ Suggests:
     ggplot2
     reshape2
 VignetteBuilder: knitr
+Imports:
+        Matrix (>= 1.3.4)
+        gurobi (>= 9.1.2)
